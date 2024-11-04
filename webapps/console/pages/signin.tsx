@@ -4,12 +4,12 @@ import { Button, Input } from "antd";
 import { useAppConfig } from "../lib/context";
 import { AlertTriangle } from "lucide-react";
 import Link from "next/link";
-import { GithubOutlined } from "@ant-design/icons";
+import { GithubOutlined, WindowsOutlined } from "@ant-design/icons";
 import React, { useState } from "react";
 import { feedbackError } from "../lib/ui";
 import { useRouter } from "next/router";
 import { branding } from "../lib/branding";
-import { credentialsLoginEnabled, githubLoginEnabled } from "../lib/nextauth.config";
+import { credentialsLoginEnabled, githubLoginEnabled, keycloakLoginEnabled } from "../lib/nextauth.config";
 import { useQuery } from "@tanstack/react-query";
 
 function JitsuLogo() {
@@ -92,7 +92,34 @@ function GitHubSignIn() {
   );
 }
 
-const NextAuthSignInPage = ({ csrfToken, providers: { github, credentials } }) => {
+function KeycloakSignIn() {
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  return (
+    <div className="space-y-4">
+      <Button
+        className="w-full"
+        icon={<WindowsOutlined />}
+        loading={loading}
+        onClick={async () => {
+          try {
+            setLoading(true);
+            await signIn("keycloak");
+            await router.push("/");
+          } catch (e: any) {
+            feedbackError("Failed to sign in with Keycloak", e);
+          } finally {
+            setLoading(false);
+          }
+        }}
+      >
+        Sign in with Keycloak
+      </Button>
+    </div>
+  );
+}
+
+const NextAuthSignInPage = ({ csrfToken, providers: { github, keycloak, credentials } }) => {
   const router = useRouter();
   const nextAuthSession = useSession();
   const app = useAppConfig();
@@ -119,8 +146,9 @@ const NextAuthSignInPage = ({ csrfToken, providers: { github, credentials } }) =
       </div>
       <div>
         {credentials.enabled && <CredentialsForm />}
-        {credentials.enabled && github.enabled && <hr className="my-8" />}
+        {credentials.enabled && ( github.enabled || keycloak.enabled) && <hr className="my-8" />}
         {github.enabled && <GitHubSignIn />}
+        {keycloak.enabled && <KeycloakSignIn />}
       </div>
       {router.query.error && (
         <div className="text-error">
@@ -155,6 +183,9 @@ export async function getServerSideProps(context) {
         github: {
           enabled: githubLoginEnabled,
         },
+        keycloak: {
+          enabled: keycloakLoginEnabled,
+        }
       },
       publicPage: true,
     },

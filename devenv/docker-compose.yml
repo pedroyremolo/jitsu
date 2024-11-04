@@ -105,3 +105,11 @@ services:
     depends_on:
       - jitsu-dev-postgres
       - jitsu-dev-kafka
+  keycloak:
+    command: start-dev
+    image: 'quay.io/keycloak/keycloak:26.0.4'
+    environment:
+      - KC_BOOTSTRAP_ADMIN_PASSWORD=admin
+      - KC_BOOTSTRAP_ADMIN_USERNAME=admin
+    ports:
+      - '8080:8080'

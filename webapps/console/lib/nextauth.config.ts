@@ -1,4 +1,5 @@
 import GithubProvider from "next-auth/providers/github";
+import KeycloakProvider from "next-auth/providers/keycloak";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { NextAuthOptions, User } from "next-auth";
 import { db } from "./server/db";
@@ -15,15 +16,22 @@ const crypto = require("crypto");
 const log = getServerLog("auth");
 
 export const githubLoginEnabled = !!process.env.GITHUB_CLIENT_ID;
+export const keycloakLoginEnabled = !!(process.env.KEYCLOAK_CLIENT_ID && process.env.KEYCLOAK_CLIENT_SECRET && process.env.KEYCLOAK_ISSUER);
 export const credentialsLoginEnabled =
   isTruish(process.env.ENABLE_CREDENTIALS_LOGIN) || !!(process.env.SEED_USER_EMAIL && process.env.SEED_USER_PASSWORD);
 
 const githubProvider = githubLoginEnabled
   ? GithubProvider({
-      clientId: process.env.GITHUB_CLIENT_ID as string,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
-    })
+    clientId: process.env.GITHUB_CLIENT_ID as string,
+    clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
+  })
   : undefined;
+
+const keycloakProvider = keycloakLoginEnabled? KeycloakProvider({
+  clientId: process.env.KEYCLOAK_CLIENT_ID as string,
+  clientSecret: process.env.KEYCLOAK_CLIENT_SECRET as string,
+  issuer: process.env.KEYCLOAK_ISSUER as string,
+}): undefined;
 
 function toId(email: string) {
   return hash("sha256", email.toLowerCase().trim());
@@ -143,7 +151,7 @@ function generateSecret(base: (string | undefined)[]) {
 
 export const nextAuthConfig: NextAuthOptions = {
   // Configure one or more authentication providers
-  providers: [githubProvider, credentialsProvider].filter(provider => !!provider) as any,
+  providers: [githubProvider, keycloakProvider, credentialsProvider].filter(provider => !!provider) as any,
   pages: {
     error: "/error/auth", // Error code passed in query string as ?error=
     signIn: "/signin", // Displays signin buttons
