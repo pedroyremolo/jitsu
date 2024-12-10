@@ -57,3 +57,12 @@ export function OIDCProvider<P extends OIDCProfile>(options: OIDCConfig<P>): OAu
     options,
   };
 }
+
+export function ParseJSONConfigFromEnv<P extends OIDCProfile>(env: string): OIDCConfig<P> | undefined {
+  try {
+    return env && env != '""' ? (JSON.parse(env) as OIDCConfig<P>) : undefined;
+  } catch (error: unknown) {
+    console.error("Failed to parse JSON config from env", error);
+    return undefined;
+  }
+}

@@ -2,7 +2,7 @@ import GithubProvider from "next-auth/providers/github";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { NextAuthOptions, User } from "next-auth";
 import { db } from "./server/db";
-import { OIDCConfig, OIDCProfile, OIDCProvider } from "./oidc";
+import { OIDCProvider, ParseJSONConfigFromEnv } from "./oidc";
 import { checkHash, createHash, hash, requireDefined } from "juava";
 import { ApiError } from "./shared/errors";
 import { getServerLog } from "./server/log";
@@ -16,7 +16,7 @@ const crypto = require("crypto");
 const log = getServerLog("auth");
 
 export const githubLoginEnabled = !!process.env.GITHUB_CLIENT_ID;
-export const oidcLoginConfig = JSON.parse(process.env.AUTH_OIDC_PROVIDER as string) as OIDCConfig<OIDCProfile>;
+export const oidcLoginConfig = ParseJSONConfigFromEnv(process.env.AUTH_OIDC_PROVIDER as string);
 export const credentialsLoginEnabled =
   isTruish(process.env.ENABLE_CREDENTIALS_LOGIN) || !!(process.env.SEED_USER_EMAIL && process.env.SEED_USER_PASSWORD);
 
