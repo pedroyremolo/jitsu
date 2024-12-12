@@ -1,4 +1,4 @@
-import type { OAuthConfig, OAuthUserConfig } from "next-auth/src/providers";
+import type { OAuthConfig, OAuthUserConfig } from "next-auth/providers/oauth";
 import { ApiError } from "./shared/errors";
 
 export interface OIDCProfile extends Record<string, any> {
