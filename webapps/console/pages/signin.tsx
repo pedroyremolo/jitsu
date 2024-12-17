@@ -140,13 +140,13 @@ const NextAuthSignInPage = ({ csrfToken, providers: { github, oidc, credentials 
     );
   }
   return (
-    <div className="mx-auto max-w-[350px] space-y-6 pt-12">
+    <div className="mx-auto max-w-[350px] space-y-2 pt-12">
       <div className="space-y-2 flex justify-center h-16">
         <JitsuLogo />
       </div>
-      <div>
+      <div className={"flex flex-col gap-1.5"}>
         {credentials.enabled && <CredentialsForm />}
-        {credentials.enabled && (github.enabled || oidc.enabled) && <hr className="my-8" />}
+        {credentials.enabled && (github.enabled || oidc.enabled) && <hr className="my-4" />}
         {github.enabled && <GitHubSignIn />}
         {oidc.enabled && <OIDCSignIn />}
       </div>
@@ -155,7 +155,7 @@ const NextAuthSignInPage = ({ csrfToken, providers: { github, oidc, credentials 
           Something went wrong. Please try again. Error code: <code>{router.query.error}</code>
         </div>
       )}
-      {!app.disableSignup && github.enabled && (
+      {!app.disableSignup && (github.enabled || oidc.enabled) && (
         <div className="text-center text-textLight text-xs">
           Automatic signup is enabled for this instance. Sign in with github and if you don't have an account, a new
           account will be created automatically. This account won't have any access to pre-existing project unless the
