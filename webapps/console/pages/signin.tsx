@@ -170,7 +170,7 @@ export async function getServerSideProps(context) {
   if (process.env.FIREBASE_AUTH) {
     throw new Error(`Firebase auth is enabled. This page should not be used.`);
   }
-  if (!githubLoginEnabled && !credentialsLoginEnabled) {
+  if (!githubLoginEnabled && !credentialsLoginEnabled && !oidcLoginConfig) {
     throw new Error(`No auth providers are enabled found. Available providers: github, credentials`);
   }
   return {
