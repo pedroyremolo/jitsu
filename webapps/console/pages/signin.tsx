@@ -140,7 +140,7 @@ const NextAuthSignInPage = ({ csrfToken, providers: { github, oidc, credentials 
     );
   }
   return (
-    <div className="mx-auto max-w-[350px] space-y-2 pt-12">
+    <div className="mx-auto max-w-[350px] space-y-6 pt-12">
       <div className="space-y-2 flex justify-center h-16">
         <JitsuLogo />
       </div>
