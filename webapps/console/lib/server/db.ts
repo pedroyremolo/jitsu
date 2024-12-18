@@ -116,7 +116,7 @@ export function createPg(): Pool {
     log
       .atInfo()
       .log(
-        `Connecting new client ${connectionUrl}. Pool stat: idle=${pool.idleCount}, waiting=${pool.waitingCount}, total=${pool.totalCount}` +
+        `Connecting new database client. Pool stat: idle=${pool.idleCount}, waiting=${pool.waitingCount}, total=${pool.totalCount}` +
           (schema ? `. Default schema: ${schema}` : "")
       );
     //this is commented on purpose, it won't work for pgbouncer in transaction mode https://www.pgbouncer.org/features.html
